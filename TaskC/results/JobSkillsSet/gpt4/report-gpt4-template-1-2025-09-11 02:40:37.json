@@ -1,0 +1,13 @@
+{
+  "kb_name": "JobSkillsSet",
+  "model": "gpt4",
+  "template": "template-1",
+  "time": "2025-09-11 02:40:37",
+  "counts": {
+    "relations": 10
+  },
+  "labels": [
+    "related_to",
+    "used_for"
+  ]
+}

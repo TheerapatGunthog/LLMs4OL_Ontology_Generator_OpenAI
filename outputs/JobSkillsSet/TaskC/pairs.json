@@ -1,0 +1,52 @@
+[
+  {
+    "head": "Domain Skill",
+    "tail": "Framework/Library",
+    "label": "used_for"
+  },
+  {
+    "head": "Domain Skill",
+    "tail": "Programming Language",
+    "label": "used_for"
+  },
+  {
+    "head": "Domain Skill",
+    "tail": "Soft Skill",
+    "label": "related_to"
+  },
+  {
+    "head": "Domain Skill",
+    "tail": "Tool/Platform",
+    "label": "used_for"
+  },
+  {
+    "head": "Framework/Library",
+    "tail": "Programming Language",
+    "label": "used_for"
+  },
+  {
+    "head": "Framework/Library",
+    "tail": "Soft Skill",
+    "label": "related_to"
+  },
+  {
+    "head": "Framework/Library",
+    "tail": "Tool/Platform",
+    "label": "used_for"
+  },
+  {
+    "head": "Programming Language",
+    "tail": "Soft Skill",
+    "label": "related_to"
+  },
+  {
+    "head": "Programming Language",
+    "tail": "Tool/Platform",
+    "label": "used_for"
+  },
+  {
+    "head": "Soft Skill",
+    "tail": "Tool/Platform",
+    "label": "used_for"
+  }
+]

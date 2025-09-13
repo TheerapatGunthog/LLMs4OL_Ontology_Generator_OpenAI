@@ -1,0 +1,1866 @@
+[
+  {
+    "entity": "sap",
+    "type": "Other"
+  },
+  {
+    "entity": "sql",
+    "type": "Programming Language"
+  },
+  {
+    "entity": "machine learning",
+    "type": "Other"
+  },
+  {
+    "entity": "r",
+    "type": "Programming Language"
+  },
+  {
+    "entity": "sas",
+    "type": "Programming Language"
+  },
+  {
+    "entity": "python",
+    "type": "Programming Language"
+  },
+  {
+    "entity": "data mining",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "data management",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "stata",
+    "type": "Programming Language"
+  },
+  {
+    "entity": "spss",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "data analysis",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "certified internal auditor",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "statistical software",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "time management",
+    "type": "Soft Skill"
+  },
+  {
+    "entity": "microsoft office",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "excel",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "tableau",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "data science",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "ai",
+    "type": "Other"
+  },
+  {
+    "entity": "quantitative analysis",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "analysis skills",
+    "type": "Soft Skill"
+  },
+  {
+    "entity": "css",
+    "type": "Programming Language"
+  },
+  {
+    "entity": "image processing",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "cloud computing",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "arcgis",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "gis",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "aws",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "linux",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "c",
+    "type": "Programming Language"
+  },
+  {
+    "entity": "c++",
+    "type": "Programming Language"
+  },
+  {
+    "entity": "javascript",
+    "type": "Programming Language"
+  },
+  {
+    "entity": "ts",
+    "type": "Programming Language"
+  },
+  {
+    "entity": "sci clearance",
+    "type": "Other"
+  },
+  {
+    "entity": "tensorflow",
+    "type": "Framework/Library"
+  },
+  {
+    "entity": "project planning",
+    "type": "Other"
+  },
+  {
+    "entity": "jira",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "statisical analysis",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "scala",
+    "type": "Programming Language"
+  },
+  {
+    "entity": "java",
+    "type": "Programming Language"
+  },
+  {
+    "entity": "drivers license",
+    "type": "Other"
+  },
+  {
+    "entity": "microsoft sql server",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "visual basic",
+    "type": "Programming Language"
+  },
+  {
+    "entity": "microsoft access",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "lmrt",
+    "type": "Other"
+  },
+  {
+    "entity": "natural language processing",
+    "type": "Other"
+  },
+  {
+    "entity": "iis",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "power bi",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "cad software",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "sharepoint",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "git",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "svn",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "react",
+    "type": "Framework/Library"
+  },
+  {
+    "entity": "adobe photoshop",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "html",
+    "type": "Programming Language"
+  },
+  {
+    "entity": "scripting",
+    "type": "Other"
+  },
+  {
+    "entity": "perl",
+    "type": "Programming Language"
+  },
+  {
+    "entity": "matlab",
+    "type": "Programming Language"
+  },
+  {
+    "entity": "splunk",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "grant writing",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "hive",
+    "type": "Other"
+  },
+  {
+    "entity": "spark",
+    "type": "Framework/Library"
+  },
+  {
+    "entity": "microsoft powerpoint",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "hadoop",
+    "type": "Framework/Library"
+  },
+  {
+    "entity": "qualitative research",
+    "type": "Other"
+  },
+  {
+    "entity": "net",
+    "type": "Other"
+  },
+  {
+    "entity": "c#",
+    "type": "Programming Language"
+  },
+  {
+    "entity": "big data",
+    "type": "Other"
+  },
+  {
+    "entity": "software development",
+    "type": "Other"
+  },
+  {
+    "entity": "signal processing",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "design experience",
+    "type": "Soft Skill"
+  },
+  {
+    "entity": "pentaho",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "oracle",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "db",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "next generation sequencing",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "bioinformatics",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "data warehouse",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "alteryx",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "ruby",
+    "type": "Programming Language"
+  },
+  {
+    "entity": "marketing",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "customer service",
+    "type": "Soft Skill"
+  },
+  {
+    "entity": "predictive analytics",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "business intelligence",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "sentiment analytics",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "xml",
+    "type": "Programming Language"
+  },
+  {
+    "entity": "shell scripting",
+    "type": "Programming Language"
+  },
+  {
+    "entity": "project management",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "azure",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "google cloud platform",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "mysql",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "salesforce crm",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "pardot",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "marketing automation",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "ui",
+    "type": "Other"
+  },
+  {
+    "entity": "six sigma certification",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "six sigma",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "google suite",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "troubleshooting",
+    "type": "Other"
+  },
+  {
+    "entity": "teradata",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "minitab",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "ach",
+    "type": "Other"
+  },
+  {
+    "entity": "nosql",
+    "type": "Other"
+  },
+  {
+    "entity": "json",
+    "type": "Other"
+  },
+  {
+    "entity": "rest",
+    "type": "Other"
+  },
+  {
+    "entity": "postgresql",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "google analytics",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "cell biology",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "node js",
+    "type": "Framework/Library"
+  },
+  {
+    "entity": "immunoassays",
+    "type": "Other"
+  },
+  {
+    "entity": "military experience",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "rmf",
+    "type": "Other"
+  },
+  {
+    "entity": "t sql",
+    "type": "Programming Language"
+  },
+  {
+    "entity": "pl",
+    "type": "Programming Language"
+  },
+  {
+    "entity": "lean",
+    "type": "Other"
+  },
+  {
+    "entity": "oop",
+    "type": "Other"
+  },
+  {
+    "entity": "managed care",
+    "type": "Other"
+  },
+  {
+    "entity": "business analysis",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "hbase",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "mongodb",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "pig",
+    "type": "Other"
+  },
+  {
+    "entity": "weka",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "microsoft word",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "qlikview",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "php",
+    "type": "Programming Language"
+  },
+  {
+    "entity": "s",
+    "type": "Other"
+  },
+  {
+    "entity": "network",
+    "type": "Other"
+  },
+  {
+    "entity": "haskell",
+    "type": "Programming Language"
+  },
+  {
+    "entity": "ci",
+    "type": "Other"
+  },
+  {
+    "entity": "unit testing",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "system design",
+    "type": "Other"
+  },
+  {
+    "entity": "survival analysis",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "database administration",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "drupal",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "software testing",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "content management systems",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "wordpress",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "microsoft project",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "visio",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "red hat enterprise linux",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "comptia security+",
+    "type": "Other"
+  },
+  {
+    "entity": "mcsd",
+    "type": "Other"
+  },
+  {
+    "entity": "kafka",
+    "type": "Framework/Library"
+  },
+  {
+    "entity": "elasticsearch",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "solr",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "threading",
+    "type": "Other"
+  },
+  {
+    "entity": "docker",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "iat",
+    "type": "Other"
+  },
+  {
+    "entity": "ids",
+    "type": "Other"
+  },
+  {
+    "entity": "iat level ii",
+    "type": "Other"
+  },
+  {
+    "entity": "clinical trials",
+    "type": "Other"
+  },
+  {
+    "entity": "sdlc",
+    "type": "Other"
+  },
+  {
+    "entity": "ssl",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "dns",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "tcp",
+    "type": "Other"
+  },
+  {
+    "entity": "ip",
+    "type": "Other"
+  },
+  {
+    "entity": "medical imaging",
+    "type": "Other"
+  },
+  {
+    "entity": "customer segmentation",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "digital marketing",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "information security",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "quantitative research",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "saas",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "go",
+    "type": "Programming Language"
+  },
+  {
+    "entity": "ftp",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "redis",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "leadership experience",
+    "type": "Soft Skill"
+  },
+  {
+    "entity": "cassandra",
+    "type": "Other"
+  },
+  {
+    "entity": "eclipse",
+    "type": "Other"
+  },
+  {
+    "entity": "telecommunication",
+    "type": "Other"
+  },
+  {
+    "entity": "ux",
+    "type": "Other"
+  },
+  {
+    "entity": "visual studio",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "financial modeling",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "dynamodb",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "supervising experience",
+    "type": "Soft Skill"
+  },
+  {
+    "entity": "service oriented architecture",
+    "type": "Other"
+  },
+  {
+    "entity": "kubernetes",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "strategic planning",
+    "type": "Other"
+  },
+  {
+    "entity": "clojure",
+    "type": "Programming Language"
+  },
+  {
+    "entity": "epic",
+    "type": "Other"
+  },
+  {
+    "entity": "technical writing",
+    "type": "Soft Skill"
+  },
+  {
+    "entity": "cd",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "soap",
+    "type": "Other"
+  },
+  {
+    "entity": "windows",
+    "type": "Other"
+  },
+  {
+    "entity": "intelligence experience",
+    "type": "Soft Skill"
+  },
+  {
+    "entity": "intelligence community experience",
+    "type": "Soft Skill"
+  },
+  {
+    "entity": "tomcat",
+    "type": "Other"
+  },
+  {
+    "entity": "jboss",
+    "type": "Framework/Library"
+  },
+  {
+    "entity": "apache",
+    "type": "Framework/Library"
+  },
+  {
+    "entity": "kanban",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "mac os",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "web development",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "jenkins",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "control m",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "iwork",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "experimental design",
+    "type": "Other"
+  },
+  {
+    "entity": "android",
+    "type": "Other"
+  },
+  {
+    "entity": "audits",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "adobe creative suite",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "adobe marketing",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "g",
+    "type": "Other"
+  },
+  {
+    "entity": "lte",
+    "type": "Other"
+  },
+  {
+    "entity": "angular",
+    "type": "Other"
+  },
+  {
+    "entity": "confluence",
+    "type": "Other"
+  },
+  {
+    "entity": "quality control",
+    "type": "Other"
+  },
+  {
+    "entity": "social media management",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "facebook advertising",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "postgis",
+    "type": "Framework/Library"
+  },
+  {
+    "entity": "management consulting",
+    "type": "Other"
+  },
+  {
+    "entity": "informatica",
+    "type": "Other"
+  },
+  {
+    "entity": "pmp",
+    "type": "Other"
+  },
+  {
+    "entity": "distributed control systems",
+    "type": "Other"
+  },
+  {
+    "entity": "marketing mix modeling",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "multichannel marketing",
+    "type": "Other"
+  },
+  {
+    "entity": "continuous improvement",
+    "type": "Soft Skill"
+  },
+  {
+    "entity": "embedded software",
+    "type": "Other"
+  },
+  {
+    "entity": "cad",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "akka",
+    "type": "Framework/Library"
+  },
+  {
+    "entity": "zookeeper",
+    "type": "Other"
+  },
+  {
+    "entity": "doubleclick",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "supply chain experience",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "icd",
+    "type": "Other"
+  },
+  {
+    "entity": "conversion optimization",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "learning technology",
+    "type": "Other"
+  },
+  {
+    "entity": "responsive web design",
+    "type": "Other"
+  },
+  {
+    "entity": "spring",
+    "type": "Other"
+  },
+  {
+    "entity": "graphql",
+    "type": "Framework/Library"
+  },
+  {
+    "entity": "ubuntu",
+    "type": "Other"
+  },
+  {
+    "entity": "centos",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "lucene",
+    "type": "Framework/Library"
+  },
+  {
+    "entity": "survey design",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "qualtrics",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "management experience",
+    "type": "Soft Skill"
+  },
+  {
+    "entity": "build automation",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "nist",
+    "type": "Other"
+  },
+  {
+    "entity": "bootstrap",
+    "type": "Framework/Library"
+  },
+  {
+    "entity": "database marketing",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "it experience",
+    "type": "Other"
+  },
+  {
+    "entity": "accounting",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "attribution modeling",
+    "type": "Other"
+  },
+  {
+    "entity": "epic certification",
+    "type": "Other"
+  },
+  {
+    "entity": "process mapping",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "retail link",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "salesforce marketing cloud",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "omniture",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "erp systems",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "clinical research",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "cdisc standards",
+    "type": "Other"
+  },
+  {
+    "entity": "test automation",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "maven",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "crystal reports",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "laboratory experience",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "fpga",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "hdi certification",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "teaching experience",
+    "type": "Soft Skill"
+  },
+  {
+    "entity": "molecular biology",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "ldap",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "ios",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "cash flow analysis",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "swift",
+    "type": "Programming Language"
+  },
+  {
+    "entity": "dod",
+    "type": "Other"
+  },
+  {
+    "entity": "iat level i",
+    "type": "Other"
+  },
+  {
+    "entity": "email marketing",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "fortran",
+    "type": "Programming Language"
+  },
+  {
+    "entity": "nginx",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "lean manufacturing",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "martech",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "lamp stack",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "invision",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "ssh",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "design patterns",
+    "type": "Other"
+  },
+  {
+    "entity": "performance marketing",
+    "type": "Other"
+  },
+  {
+    "entity": "malware analysis",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "cybersecurity",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "websphere",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "paas",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "google adwords",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "nfs",
+    "type": "Other"
+  },
+  {
+    "entity": "lua",
+    "type": "Programming Language"
+  },
+  {
+    "entity": "sales experience",
+    "type": "Soft Skill"
+  },
+  {
+    "entity": "mesos",
+    "type": "Other"
+  },
+  {
+    "entity": "adobe indesign",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "rust",
+    "type": "Programming Language"
+  },
+  {
+    "entity": "new relic",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "biostatistics",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "oracle ebs",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "operations research",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "genetics",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "sparql",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "project engineering",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "process engineering",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "chef",
+    "type": "Other"
+  },
+  {
+    "entity": "vmware",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "openstack",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "software troubleshooting",
+    "type": "Other"
+  },
+  {
+    "entity": "change management",
+    "type": "Other"
+  },
+  {
+    "entity": "project leadership",
+    "type": "Soft Skill"
+  },
+  {
+    "entity": "agriculture",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "iaas",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "technical support",
+    "type": "Other"
+  },
+  {
+    "entity": "ember",
+    "type": "Other"
+  },
+  {
+    "entity": "hp alm",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "project implementation",
+    "type": "Other"
+  },
+  {
+    "entity": "calculus",
+    "type": "Other"
+  },
+  {
+    "entity": "cpa",
+    "type": "Other"
+  },
+  {
+    "entity": "certified management accountant",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "acquisition strategy",
+    "type": "Other"
+  },
+  {
+    "entity": "pci",
+    "type": "Other"
+  },
+  {
+    "entity": "finra license",
+    "type": "Other"
+  },
+  {
+    "entity": "cissp",
+    "type": "Other"
+  },
+  {
+    "entity": "internal audits",
+    "type": "Other"
+  },
+  {
+    "entity": "certified scrum master",
+    "type": "Other"
+  },
+  {
+    "entity": "research laboratory experience",
+    "type": "Other"
+  },
+  {
+    "entity": "front end development",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "sox",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "aviation experience",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "adas",
+    "type": "Other"
+  },
+  {
+    "entity": "computer graphics",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "network security",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "e commerce",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "obiee",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "technical project management",
+    "type": "Other"
+  },
+  {
+    "entity": "business process reengineering",
+    "type": "Other"
+  },
+  {
+    "entity": "xslt",
+    "type": "Framework/Library"
+  },
+  {
+    "entity": "compliance management",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "project management methodology",
+    "type": "Other"
+  },
+  {
+    "entity": "ceh",
+    "type": "Other"
+  },
+  {
+    "entity": "gsec",
+    "type": "Other"
+  },
+  {
+    "entity": "design controls",
+    "type": "Other"
+  },
+  {
+    "entity": "quality management",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "wireframing",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "program management",
+    "type": "Other"
+  },
+  {
+    "entity": "icd coding",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "hibernate",
+    "type": "Other"
+  },
+  {
+    "entity": "workday",
+    "type": "Other"
+  },
+  {
+    "entity": "remote access software",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "gpen",
+    "type": "Other"
+  },
+  {
+    "entity": "unity",
+    "type": "Other"
+  },
+  {
+    "entity": "identity and access management",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "selenium",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "testng",
+    "type": "Framework/Library"
+  },
+  {
+    "entity": "firewall",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "active directory",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "project",
+    "type": "Other"
+  },
+  {
+    "entity": "lms",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "financial accounting",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "microstation",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "basic computer skills",
+    "type": "Soft Skill"
+  },
+  {
+    "entity": "itil",
+    "type": "Framework/Library"
+  },
+  {
+    "entity": "cerner",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "regulatory reporting",
+    "type": "Other"
+  },
+  {
+    "entity": "medical terminology",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "magento",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "sybase",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "integrated library system",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "bilingual",
+    "type": "Soft Skill"
+  },
+  {
+    "entity": "cpt coding",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "marketo",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "peoplesoft",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "jd edwards",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "process management",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "opensuse",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "apics certification",
+    "type": "Other"
+  },
+  {
+    "entity": "rhia",
+    "type": "Other"
+  },
+  {
+    "entity": "cphq",
+    "type": "Other"
+  },
+  {
+    "entity": "hyperion",
+    "type": "Other"
+  },
+  {
+    "entity": "coaching experience",
+    "type": "Soft Skill"
+  },
+  {
+    "entity": "medical coding",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "epidemiology",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "employee evaluation",
+    "type": "Other"
+  },
+  {
+    "entity": "clean driving record",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "rn",
+    "type": "Programming Language"
+  },
+  {
+    "entity": "icu",
+    "type": "Other"
+  },
+  {
+    "entity": "nursing experience",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "ultipro",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "professional in human resources",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "shrm certified professional",
+    "type": "Other"
+  },
+  {
+    "entity": "rhit",
+    "type": "Other"
+  },
+  {
+    "entity": "ncqa standards",
+    "type": "Other"
+  },
+  {
+    "entity": "adobe acrobat",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "medical insurance",
+    "type": "Other"
+  },
+  {
+    "entity": "cfe",
+    "type": "Other"
+  },
+  {
+    "entity": "certified compliance and ethics professional",
+    "type": "Other"
+  },
+  {
+    "entity": "legal research",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "process improvement",
+    "type": "Other"
+  },
+  {
+    "entity": "media buying",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "ppc campaign management",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "transportation management",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "google search console",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "programmable logic controllers",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "powershell",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "hubspot",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "calibration",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "conflict management",
+    "type": "Soft Skill"
+  },
+  {
+    "entity": "certified compensation professional",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "ivr",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "application support",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "iso",
+    "type": "Other"
+  },
+  {
+    "entity": "gaap",
+    "type": "Other"
+  },
+  {
+    "entity": "ifrs",
+    "type": "Other"
+  },
+  {
+    "entity": "affiliate marketing",
+    "type": "Other"
+  },
+  {
+    "entity": "microsoft windows server",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "tfs",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "cordova",
+    "type": "Framework/Library"
+  },
+  {
+    "entity": "omnigraffle",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "mcsa",
+    "type": "Other"
+  },
+  {
+    "entity": "mcse",
+    "type": "Other"
+  },
+  {
+    "entity": "objective c",
+    "type": "Programming Language"
+  },
+  {
+    "entity": "routing protocols",
+    "type": "Other"
+  },
+  {
+    "entity": "https",
+    "type": "Other"
+  },
+  {
+    "entity": "ipsec",
+    "type": "Other"
+  },
+  {
+    "entity": "payroll",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "cism",
+    "type": "Other"
+  },
+  {
+    "entity": "certified information systems auditor",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "business management",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "product demos",
+    "type": "Other"
+  },
+  {
+    "entity": "public relations",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "chartered financial analyst",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "b b sales",
+    "type": "Other"
+  },
+  {
+    "entity": "bc",
+    "type": "Other"
+  },
+  {
+    "entity": "be",
+    "type": "Other"
+  },
+  {
+    "entity": "pharmacy residency",
+    "type": "Other"
+  },
+  {
+    "entity": "csslp",
+    "type": "Other"
+  },
+  {
+    "entity": "certified project manager",
+    "type": "Soft Skill"
+  },
+  {
+    "entity": "enrolled agent",
+    "type": "Other"
+  },
+  {
+    "entity": "public speaking",
+    "type": "Soft Skill"
+  },
+  {
+    "entity": "mpls",
+    "type": "Other"
+  },
+  {
+    "entity": "ospf",
+    "type": "Other"
+  },
+  {
+    "entity": "jncia",
+    "type": "Other"
+  },
+  {
+    "entity": "juniper",
+    "type": "Other"
+  },
+  {
+    "entity": "bgp",
+    "type": "Other"
+  },
+  {
+    "entity": "ccda",
+    "type": "Other"
+  },
+  {
+    "entity": "cisco routers",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "ccna security",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "ccna",
+    "type": "Other"
+  },
+  {
+    "entity": "sscp",
+    "type": "Other"
+  },
+  {
+    "entity": "load balancing",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "mcts",
+    "type": "Framework/Library"
+  },
+  {
+    "entity": "mcitp",
+    "type": "Other"
+  },
+  {
+    "entity": "network engineering",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "ansible",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "fedramp",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "fips",
+    "type": "Other"
+  },
+  {
+    "entity": "fisma",
+    "type": "Other"
+  },
+  {
+    "entity": "puppet",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "system administration",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "network infrastructure",
+    "type": "Other"
+  },
+  {
+    "entity": "cgmp",
+    "type": "Other"
+  },
+  {
+    "entity": "xquery",
+    "type": "Programming Language"
+  },
+  {
+    "entity": "sqlite",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "ajax",
+    "type": "Framework/Library"
+  },
+  {
+    "entity": "filemaker",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "ellucian",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "sailpoint",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "rhce",
+    "type": "Other"
+  },
+  {
+    "entity": "dhcp",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "struts",
+    "type": "Framework/Library"
+  },
+  {
+    "entity": "mcp",
+    "type": "Other"
+  },
+  {
+    "entity": "perforce",
+    "type": "Other"
+  },
+  {
+    "entity": "heroku",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "seo",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "comptia network+",
+    "type": "Domain Skill"
+  },
+  {
+    "entity": "solarwinds",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "ccnp",
+    "type": "Other"
+  },
+  {
+    "entity": "ant",
+    "type": "Other"
+  },
+  {
+    "entity": "versionone",
+    "type": "Tool/Platform"
+  },
+  {
+    "entity": "xero",
+    "type": "Other"
+  },
+  {
+    "entity": "erlang",
+    "type": "Programming Language"
+  },
+  {
+    "entity": "maya",
+    "type": "Other"
+  }
+]

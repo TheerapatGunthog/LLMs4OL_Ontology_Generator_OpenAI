@@ -1,0 +1,22 @@
+[
+  {
+    "child": "Applied CS",
+    "parent": "Core CS"
+  },
+  {
+    "child": "Software Eng",
+    "parent": "Applied CS"
+  },
+  {
+    "child": "Networks",
+    "parent": "Applied CS"
+  },
+  {
+    "child": "Databases",
+    "parent": "Applied CS"
+  },
+  {
+    "child": "HCI",
+    "parent": "Applied CS"
+  }
+]

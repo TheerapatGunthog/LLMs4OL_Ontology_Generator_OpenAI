@@ -1,0 +1,107 @@
+[
+  {
+    "head": "Applied CS",
+    "tail": "Core CS",
+    "label": "prerequisite_of"
+  },
+  {
+    "head": "Applied CS",
+    "tail": "Databases",
+    "label": "prerequisite_of"
+  },
+  {
+    "head": "Applied CS",
+    "tail": "HCI",
+    "label": "related_to"
+  },
+  {
+    "head": "Applied CS",
+    "tail": "Math",
+    "label": "prerequisite_of"
+  },
+  {
+    "head": "Applied CS",
+    "tail": "Networks",
+    "label": "related_to"
+  },
+  {
+    "head": "Applied CS",
+    "tail": "Software Eng",
+    "label": "related_to"
+  },
+  {
+    "head": "Core CS",
+    "tail": "Databases",
+    "label": "prerequisite_of"
+  },
+  {
+    "head": "Core CS",
+    "tail": "HCI",
+    "label": "related_to"
+  },
+  {
+    "head": "Core CS",
+    "tail": "Math",
+    "label": "prerequisite_of"
+  },
+  {
+    "head": "Core CS",
+    "tail": "Networks",
+    "label": "related_to"
+  },
+  {
+    "head": "Core CS",
+    "tail": "Software Eng",
+    "label": "related_to"
+  },
+  {
+    "head": "Databases",
+    "tail": "HCI",
+    "label": "related_to"
+  },
+  {
+    "head": "Databases",
+    "tail": "Math",
+    "label": "related_to"
+  },
+  {
+    "head": "Databases",
+    "tail": "Networks",
+    "label": "related_to"
+  },
+  {
+    "head": "Databases",
+    "tail": "Software Eng",
+    "label": "related_to"
+  },
+  {
+    "head": "HCI",
+    "tail": "Math",
+    "label": "prerequisite_of"
+  },
+  {
+    "head": "HCI",
+    "tail": "Networks",
+    "label": "related_to"
+  },
+  {
+    "head": "HCI",
+    "tail": "Software Eng",
+    "label": "related_to"
+  },
+  {
+    "head": "Math",
+    "tail": "Networks",
+    "label": "applies_to"
+  },
+  {
+    "head": "Math",
+    "tail": "Software Eng",
+    "label": "prerequisite_of"
+  },
+  {
+    "head": "Networks",
+    "tail": "Software Eng",
+    "label": "related_to"
+  }
+]

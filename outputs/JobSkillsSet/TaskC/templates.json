@@ -1,0 +1,3 @@
+[
+  "Classify the relation between Head and Tail strictly as one of: {labels}.\nHead: {head}\nTail: {tail}\nAnswer:"
+]
