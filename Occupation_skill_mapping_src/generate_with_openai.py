@@ -1,6 +1,5 @@
 import os
 import json
-import argparse
 import pandas as pd
 from typing import List, Any, Optional
 from dotenv import load_dotenv
@@ -277,25 +276,15 @@ def taskC_occ_relations(
 
 # --- CLI ---
 def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--occupations_csv", required=True)
-    ap.add_argument("--skills_csv", required=True)
-    ap.add_argument("--out_root", default="Occupations_Skills_Mapping")
-    ap.add_argument("--model", default="gpt-4o-mini")
-    ap.add_argument(
-        "--taxonomy_seeds",
-        type=str,
-        default='[["Data Scientist","Technical Occupation"],["ML Engineer","Technical Occupation"],["Project Manager","Management"]]',
-        help='JSON string of [["child","parent"], ...] or "auto"',
-    )
-    ap.add_argument(
-        "--taxonomy_mode",
-        choices=["manual", "auto"],
-        default=None,
-        help="manual=use --taxonomy_seeds JSON, auto=let LLM propose parents",
-    )
-    ap.add_argument("--relation_labels", nargs="+", default=["related_to", "collaborates_with", "depends_on"])
-    args = ap.parse_args()
+    args = {
+        "occupations_csv": "occ_update.csv",
+        "skills_csv": "skill_update.csv",
+        "out_root": "Occupations_Skills_Mapping",
+        "model": "gpt-4o-mini",
+        "taxonomy_seeds": 'auto',
+        "taxonomy_mode": "auto",
+        "relation_labels": ["related_to", "collaborates_with", "depends_on"],
+    }
 
     # Task A
     A_dir = f"{args.out_root}/TaskA/JobSkillsSet"

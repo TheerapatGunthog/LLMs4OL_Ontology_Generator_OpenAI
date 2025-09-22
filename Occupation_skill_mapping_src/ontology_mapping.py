@@ -1,6 +1,5 @@
 import os
 import json
-import argparse
 import re
 from pathlib import Path
 from typing import List, Dict, Any
@@ -221,13 +220,13 @@ def write_ttl(onto: Dict[str, Any], out_path: Path, base_iri: str = "http://exam
 
 # ---------- CLI ----------
 def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--datasets_root", default="Occupations_Skills_Mapping")
-    ap.add_argument("--sets", nargs="+", required=True)
-    ap.add_argument("--out_name", default="ontology.json")
-    ap.add_argument("--out_ttl", default="ontology.ttl")
-    ap.add_argument("--base_iri", default="http://example.org/occ-skills#")
-    args = ap.parse_args()
+    args = {
+        "datasets_root": "Occupations_Skills_Mapping",
+        "sets": ["JobSkillsSet"],
+        "out_name": "ontology.json",
+        "out_ttl": "ontology.ttl",
+        "base_iri": "http://example.org/occ-skills#",
+    }
 
     root = Path(args.datasets_root)
     for s in args.sets:

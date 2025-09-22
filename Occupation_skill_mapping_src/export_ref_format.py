@@ -1,6 +1,5 @@
 import os
 import json
-import argparse
 import time
 from pathlib import Path
 
@@ -165,12 +164,12 @@ def export_taskC(set_root: Path, model: str = "gpt4", template_name: str = "temp
 
 
 def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--datasets_root", default="datasets")
-    ap.add_argument("--sets", nargs="+", required=True)
-    ap.add_argument("--model", default="gpt-4o-mini")
-    ap.add_argument("--template", default="template-1")
-    args = ap.parse_args()
+    args = {
+        "datasets_root": "Occupations_Skills_Mapping",
+        "sets": ["JobSkillsSet"],
+        "model": "gpt-4o-mini",
+        "template": "template-1",
+    }
 
     root = Path(args.datasets_root)
     for s in args.sets:
