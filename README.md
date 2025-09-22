@@ -1,4 +1,4 @@
-# 1. การสร้างและติดตั้ง environment
+# การสร้างและติดตั้ง environment
 
 ```bash
 python -m venv <name_your_env>
@@ -15,60 +15,79 @@ pip install -r requirements.txt
 OPENAI_API_KEY="your_api_key"
 ```
 
-# 2 การใช้ generate_with_openai.py
+---
 
-เข้า floder `Occupation_skill_mapping_src/`
-การ run code
+# Usage
+
+cd เข้า floder `Occupation_skill_mapping_src/`
 
 ```bash
-python generate_with_openai.py \
-  --occupations_csv occ_update.csv \
-  --skills_csv skill_update.csv \
-  --out_root my_output_dir \
-  --model gpt-4o-mini \
-  --taxonomy_mode auto \
-  --relation_labels related_to collaborates_with depends_on
+cd Occupation_skill_mapping_src/
+```
+
+## 1 Generate Tasks (A, B, C)
+
+cd เปิด `generate_with_openai.py` แล้วแก้ตัวแปร `args = { ... }` หรือ class `_Args` ให้ตรงกับไฟล์ CSV
+
+```python
+args = {
+    "occupations_csv": "occ_update.csv",
+    "skills_csv": "skill_update.csv",
+    "out_root": "Occupations_Skills_Mapping",
+    "model": "gpt-4o-mini",
+    "taxonomy_seeds": "auto",     # หรือ JSON string [["child","parent"],...]
+    "taxonomy_mode": "auto",      # "manual" หรือ "auto"
+    "relation_labels": ["related_to", "collaborates_with", "depends_on"],
+}
 
 ```
 
-Arguments
-
-- --occupations_csv (required) : ไฟล์ CSV รายการอาชีพ
-- --skills_csv (required) : ไฟล์ CSV รายการสกิล
-- --out_root (default=Occupations_Skills_Mapping) : โฟลเดอร์ผลลัพธ์
-- --model (default=gpt-4o-mini) : เลือก LLM
-- --taxonomy_seeds : JSON string [[child, parent], ...] หรือ "auto"
-- --taxonomy_mode : "manual" ใช้ seeds ที่ให้มา หรือ "auto" ให้ LLM สร้างเอง
-- --relation_labels (default=related_to collaborates_with depends_on) : ชุด label ของ relation
-  ผลลัพธ์ที่สร้างจะอยู่ใน out_root/TaskA, out_root/TaskB, out_root/TaskC.
-
-# 3 การใช้ export_ref_format.py
-
-สคริปต์นี้ export ข้อมูลที่ได้ให้อยู่ใน format มาตรฐาน (เช่น \*\_entities.json, stats.json, templates.json)
+จากนั้นรัน
 
 ```bash
-python export_ref_format.py \
-  --datasets_root my_output_dir \
-  --sets JobSkillsSet \
-  --model gpt-4o-mini \
-  --template template-1
+python generate_with_openai.py
 ```
 
-Arguments
+ผลลัพธ์จะอยู่ในโฟลเดอร์ `Occupations_Skills_Mapping/TaskA`, `TaskB`, `TaskC`.
 
-- --datasets_root (default=datasets) : root directory ของชุดข้อมูล
-- --sets (required) : รายชื่อ dataset (เช่น JobSkillsSet)
-- --model (default=gpt-4o-mini) : model สำหรับ metadata
-- --template (default=template-1) : template name
+## 2 Export Reference Format
 
-# 4 การใช้ ontology_mapping.py
+เปิด `export_ref_format` แล้วแก้ค่าตัวแปร
 
-สคริปต์นี้รวมผล Task A, B, C ให้เป็น ontology object และ export ออกเป็น Turtle (TTL)
+```python
+args = {
+    "datasets_root": "Occupations_Skills_Mapping",
+    "sets": ["JobSkillsSet"],
+    "model": "gpt-4o-mini",
+    "template": "template-1",
+}
+```
 
 ```bash
-from pathlib import Path
-from ontology_mapping import build_ontology, write_ttl
-
-onto = build_ontology(Path("my_output_dir"), "JobSkillsSet")
-write_ttl(onto, Path("ontology.ttl"))
+python export_ref_format.py
 ```
+
+จะสร้างไฟล์ `entities.json`, `stats.json`, `templates.json` ใน TaskA/TaskB/TaskC.
+
+## Build Ontology + Export TTL
+
+เปิด `ontology_mapping.py` แล้วแก้ค่าตัวแปร
+
+```python
+args = {
+    "datasets_root": "Occupations_Skills_Mapping",
+    "sets": ["JobSkillsSet"],
+    "out_name": "ontology.json",
+    "out_ttl": "ontology.ttl",
+    "base_iri": "http://example.org/occ-skills#",
+}
+```
+
+```bash
+python ontology_mapping.py
+```
+
+จะได้
+
+- `ontology.json`
+- `ontology.ttl` (สำหรับโหลดเข้า Protégé หรือระบบ ontology อื่น ๆ)
