@@ -2,6 +2,7 @@ import os
 import json
 import time
 from pathlib import Path
+from types import SimpleNamespace
 
 # --- config ---
 TASKA_SUBDIR = "JobSkillsSet"
@@ -164,12 +165,14 @@ def export_taskC(set_root: Path, model: str = "gpt4", template_name: str = "temp
 
 
 def main():
-    args = {
+    args_dict = {
         "datasets_root": "Occupations_Skills_Mapping",
         "sets": ["JobSkillsSet"],
         "model": "gpt-4o-mini",
         "template": "template-1",
     }
+
+    args = SimpleNamespace(**args_dict)
 
     root = Path(args.datasets_root)
     for s in args.sets:

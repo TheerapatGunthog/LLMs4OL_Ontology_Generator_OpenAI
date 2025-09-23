@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from tqdm import tqdm
 from openai import OpenAI
 import re
+from types import SimpleNamespace  # ← เพิ่ม
 
 load_dotenv()
 
@@ -276,7 +277,7 @@ def taskC_occ_relations(
 
 # --- CLI ---
 def main():
-    args = {
+    args_dict = {
         "occupations_csv": "occ_update.csv",
         "skills_csv": "skill_update.csv",
         "out_root": "Occupations_Skills_Mapping",
@@ -285,6 +286,8 @@ def main():
         "taxonomy_mode": "auto",
         "relation_labels": ["related_to", "collaborates_with", "depends_on"],
     }
+    # แปลง dict -> namespace เพื่อให้ใช้ dot-access ได้
+    args = SimpleNamespace(**args_dict)
 
     # Task A
     A_dir = f"{args.out_root}/TaskA/JobSkillsSet"
