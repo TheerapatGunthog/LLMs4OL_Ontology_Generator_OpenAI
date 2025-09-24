@@ -1,8 +1,10 @@
+# ontology_mapping.py
 import os
 import json
 import re
 from pathlib import Path
 from typing import List, Dict, Any
+from types import SimpleNamespace
 
 
 # ---------- IO helpers ----------
@@ -51,13 +53,17 @@ def read_taskC_relations(p: Path) -> List[Dict[str, str]]:
 
 
 # ---------- Core build ----------
-def build_ontology(kb_root: Path, kb_name: str) -> Dict[str, Any]:
-    # locate Task A inputs (prefer new)
-    a_new = kb_root / "TaskA" / "JobSkillsSet" / "occ2skills.json"
-    a_legacy = kb_root / "TaskA" / "JobSkillsSet" / "data.json"
-    a_ref = kb_root.parent / "TaskA" / kb_name / f"{kb_name.lower()}_entities.json"
+def build_ontology(datasets_root: Path, kb_name: str) -> Dict[str, Any]:
+    """
+    datasets_root: Path('Occupations_Skills_Mapping')
+    kb_name: e.g., 'JobSkillsSet'
+    """
+    # Task A inputs live at: <root>/TaskA/<kb>/{occ2skills.json|data.json|<kb>_entities.json}
+    a_new = datasets_root / "TaskA" / kb_name / "occ2skills.json"
+    a_legacy = datasets_root / "TaskA" / kb_name / "data.json"
+    a_ref = datasets_root / "TaskA" / kb_name / f"{kb_name.lower()}_entities.json"
 
-    # entities: คู่จริงเท่านั้น (อาจมี entity=None ถ้ามาจากไฟล์ ref)
+    # entities
     if a_new.exists():
         ents = read_entities_A(a_new, kb_name)
     elif a_legacy.exists():
@@ -67,26 +73,26 @@ def build_ontology(kb_root: Path, kb_name: str) -> Dict[str, Any]:
     else:
         raise FileNotFoundError("Task A entities not found in any supported format.")
 
-    # อาชีพทั้งหมด: ถ้า occ2skills.json มี ให้ใช้เป็น source of truth
+    # occupations
     if a_new.exists():
         rows = loadj(a_new)  # [{"occupation": str, "skills": [str]}]
         occupations = sorted({r.get("occupation") for r in rows if r.get("occupation")})
     else:
         occupations = sorted({e["type"] for e in ents if e.get("type")})
 
-    # สกิล: ตัด None ออก
+    # skills
     skills = sorted({e["entity"] for e in ents if e.get("entity") is not None})
 
-    # edges
+    # requires edges
     requires = [
         {"occupation": e["type"], "skill": e["entity"]}
         for e in ents
         if e.get("entity") is not None and e.get("type") in occupations
     ]
 
-    # Task B and C
-    b_pairs = read_taskB_pairs(kb_root / "TaskB" / "Occupations" / "pairs.json")
-    c_rels = read_taskC_relations(kb_root / "TaskC" / "Occupations" / "pairs.json")
+    # Task B and Task C inputs live at: <root>/TaskB/Occupations/pairs.json and <root>/TaskC/Occupations/pairs.json
+    b_pairs = read_taskB_pairs(datasets_root / "TaskB" / "Occupations" / "pairs.json")
+    c_rels = read_taskC_relations(datasets_root / "TaskC" / "Occupations" / "pairs.json")
     isa = [{"child": r["child"], "parent": r["parent"]} for r in b_pairs]
     rels = [{"head": r["head"], "tail": r["tail"], "label": r["label"]} for r in c_rels]
 
@@ -105,42 +111,19 @@ def build_ontology(kb_root: Path, kb_name: str) -> Dict[str, Any]:
 
 
 # ---------- TTL writer (Protégé-friendly) ----------
-def _to_slug(s: str) -> str:
-    # Safe local name for Turtle QNames: letters, digits, underscore
+def _slug(s: str) -> str:
     s = s.strip()
-    s = re.sub(r"[^\w\- ]+", "", s)      # remove non-word except dash/space
+    s = re.sub(r"[^\w\- ]+", "", s)      # keep word, dash, space
     s = s.replace("-", "_")
     s = re.sub(r"\s+", "_", s)
     if not s:
         s = "Unnamed"
-    # QName must not start with a digit
     if s[0].isdigit():
         s = "_" + s
     return s
 
 
 def write_ttl(onto: Dict[str, Any], out_path: Path, base_iri: str = "http://example.org/occ-skills#") -> None:
-    """
-    Individuals model (OWL Thing):
-      - ex:Occupation, ex:Skill are owl:Class (subClassOf owl:Thing)
-      - Each occupation becomes an individual of ex:Occupation
-      - Each skill becomes an individual of ex:Skill
-      - ex:requiresSkill links occupation-individual -> skill-individual
-      - ex:isAOccupationOf (or skos:broaderTransitive) links occupation-individual -> parent-occupation-individual
-      - Non-taxonomic relation labels become object properties between occupation-individuals
-    """
-    import re
-
-    def slug(s: str) -> str:
-        s = s.strip()
-        s = re.sub(r"[^\w\- ]+", "", s).replace("-", "_")
-        s = re.sub(r"\s+", "_", s)
-        if not s:
-            s = "Unnamed"
-        if s[0].isdigit():
-            s = "_" + s
-        return s
-
     occs = onto["nodes"]["occupations"]
     skills = onto["nodes"]["skills"]
     requires = onto["edges"]["requiresSkill"]
@@ -148,7 +131,7 @@ def write_ttl(onto: Dict[str, Any], out_path: Path, base_iri: str = "http://exam
     rels = onto["edges"]["relations"]
     rel_props = sorted({r["label"] for r in rels}) if rels else []
 
-    lines = []
+    lines: List[str] = []
     w = lines.append
 
     # prefixes
@@ -161,7 +144,7 @@ def write_ttl(onto: Dict[str, Any], out_path: Path, base_iri: str = "http://exam
     w("ex: a owl:Ontology .")
     w("")
 
-    # classes (subclasses of owl:Thing)
+    # classes
     w("ex:Occupation a owl:Class ; rdfs:subClassOf owl:Thing .")
     w("ex:Skill a owl:Class ; rdfs:subClassOf owl:Thing .")
     w("")
@@ -170,24 +153,24 @@ def write_ttl(onto: Dict[str, Any], out_path: Path, base_iri: str = "http://exam
     w("ex:requiresSkill a owl:ObjectProperty ; rdfs:domain ex:Occupation ; rdfs:range ex:Skill .")
     w("ex:isAOccupationOf a owl:ObjectProperty ; rdfs:domain ex:Occupation ; rdfs:range ex:Occupation .")
     for p in rel_props:
-        pslug = slug(p)
+        pslug = _slug(p)
         w(f"ex:{pslug} a owl:ObjectProperty ; rdfs:domain ex:Occupation ; rdfs:range ex:Occupation .")
     w("")
 
-    # individuals: occupations
+    # occupation individuals
     for o in occs:
-        oslug = slug(o)
+        oslug = _slug(o)
         w(f"ex:{oslug} a ex:Occupation ; rdfs:label \"{o}\"^^xsd:string .")
     w("")
-    # individuals: skills
+
+    # skill individuals
     for s in skills:
-        sslug = slug(s)
+        sslug = _slug(s)
         w(f"ex:{sslug} a ex:Skill ; rdfs:label \"{s}\"^^xsd:string .")
     w("")
 
-    # isA between occupation individuals
-    # child -> parent via ex:isAOccupationOf
-    occ_set = {o: slug(o) for o in occs}
+    # isA edges
+    occ_set = {o: _slug(o) for o in occs}
     for e in isa:
         c = e["child"]
         p = e["parent"]
@@ -195,8 +178,8 @@ def write_ttl(onto: Dict[str, Any], out_path: Path, base_iri: str = "http://exam
             w(f"ex:{occ_set[c]} ex:isAOccupationOf ex:{occ_set[p]} .")
     w("")
 
-    # requiresSkill links
-    sk_set = {s: slug(s) for s in skills}
+    # requiresSkill edges
+    sk_set = {s: _slug(s) for s in skills}
     for e in requires:
         o = e["occupation"]
         s = e["skill"]
@@ -204,9 +187,9 @@ def write_ttl(onto: Dict[str, Any], out_path: Path, base_iri: str = "http://exam
             w(f"ex:{occ_set[o]} ex:requiresSkill ex:{sk_set[s]} .")
     w("")
 
-    # non-taxonomic relations between occupation individuals
+    # non-taxonomic relations
     for r in rels:
-        prop = slug(r["label"])
+        prop = _slug(r["label"])
         h = r["head"]
         t = r["tail"]
         if h in occ_set and t in occ_set:
@@ -220,27 +203,25 @@ def write_ttl(onto: Dict[str, Any], out_path: Path, base_iri: str = "http://exam
 
 # ---------- CLI ----------
 def main():
-    args = {
-        "datasets_root": "Occupations_Skills_Mapping",
-        "sets": ["JobSkillsSet"],
-        "out_name": "ontology.json",
-        "out_ttl": "ontology.ttl",
-        "base_iri": "http://example.org/occ-skills#",
-    }
+    args = SimpleNamespace(
+        datasets_root="Occupations_Skills_Mapping",
+        sets=["JobSkillsSet"],
+        out_name="ontology.json",
+        out_ttl="ontology.ttl",
+        base_iri="http://example.org/occ-skills#",
+    )
 
     root = Path(args.datasets_root)
-    for s in args.sets:
-        kb_root = root / s
-        kb_name = kb_root.name
 
-        onto = build_ontology(kb_root, kb_name)
+    for kb_name in args.sets:
+        # build ontology from <root>/Task*
+        onto = build_ontology(root, kb_name)
 
-        # JSON
-        out_json = kb_root / "ontology" / args.out_name
+        # outputs under <root>/<kb>/ontology/
+        out_json = root / kb_name / "ontology" / args.out_name
         dumpj(onto, out_json)
 
-        # TTL
-        out_ttl = kb_root / "ontology" / args.out_ttl
+        out_ttl = root / kb_name / "ontology" / args.out_ttl
         write_ttl(onto, out_ttl, base_iri=args.base_iri)
 
         print(f"wrote {out_json}")
