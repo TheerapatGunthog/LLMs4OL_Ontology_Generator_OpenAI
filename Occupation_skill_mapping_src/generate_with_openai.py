@@ -64,9 +64,12 @@ def chat(client: OpenAI, model: str, sys: str, usr: str, mt: int = 512) -> str:
 
 
 def pick_col(df: pd.DataFrame, prefs: List[str]) -> str:
-    for c in prefs:
-        if c in df.columns:
-            return c
+    # normalize ชื่อคอลัมน์
+    cols_map = {c.lower().strip(): c for c in df.columns}
+    for p in prefs:
+        key = p.lower().strip()
+        if key in cols_map:
+            return cols_map[key]
     objs = [c for c in df.columns if df[c].dtype == object]
     return objs[0] if objs else df.columns[0]
 
@@ -101,30 +104,41 @@ def taskA_map_skills_to_occ(skills_csv: str, occ_csv: str, out_dir: str, model: 
     df_s = pd.read_csv(skills_csv)
     df_o = pd.read_csv(occ_csv)
 
+    # normalize header
+    df_s.columns = df_s.columns.str.strip()
+    df_o.columns = df_o.columns.str.strip()
+
     s_col = pick_col(df_s, ["skill", "skills, ", "skills", "name", "title"])
     o_col = pick_col(df_o, ["occupation", "job", "title", "name"])
+
+    # หา NOO column แบบ robust (ไม่เปลี่ยนตรรกะการใช้ NOO)
+    noo_col = next((c for c in df_o.columns if c.strip().lower() == "noo"), None)
+    has_noo = noo_col is not None
 
     skills = _dedupe_str(df_s[s_col])
     occup = _dedupe_str(df_o[o_col])
 
     ensure_dir(out_dir)
-    has_noo = "NOO" in df_o.columns
+
     if not has_noo:
         occ2skills = _taskA_fallback_original(skills, occup, out_dir, model)
         _persist_occ2skills(out_dir, occ2skills, occup)
         _persist_entities_stats(out_dir, occ2skills, occup)
         return occup
 
-    # NOO pipeline
     client = get_client()
-    df_noo = df_o[[o_col, "NOO"]].copy()
-    df_noo["NOO"] = pd.to_numeric(df_noo["NOO"], errors="coerce").fillna(0).astype(int).clip(lower=0)
+    df_noo = df_o[[o_col, noo_col]].copy()
+    df_noo[noo_col] = pd.to_numeric(df_noo[noo_col], errors="coerce").fillna(0).astype(int).clip(lower=0)
+
+    # log จะอยู่ใต้ TaskA/<kb>/_debug_logs/
+    log_dir = os.path.join(out_dir, "_debug_logs")
+    ensure_dir(log_dir)
 
     occ2skills = {o: [] for o in occup}
     for occ_name, noo in tqdm(df_noo.itertuples(index=False), total=len(df_noo), desc="TaskA: occupation→skills"):
         if noo <= 0:
             continue
-        selected = _select_skills_for_occ(occ_name, noo, skills, client, model)
+        selected = _select_skills_for_occ(occ_name, noo, skills, client, model, log_dir)
         occ2skills[occ_name] = selected
 
     _persist_occ2skills(out_dir, occ2skills, occup)
@@ -188,55 +202,49 @@ def _safe_debug_write(path: str, txt: Any) -> None:
         pass
 
 
-def _dump_log(occ_name: str, logs: dict):
-    """เขียน log แยกตาม occupation ลงไฟล์"""
-    dbg_dir = "debug_logs"
-    ensure_dir(dbg_dir)
+def _dump_log(log_dir: str, occ_name: str, logs: dict):
+    ensure_dir(log_dir)
     fname = _safe_name(occ_name) + ".json"
-    dumpj(os.path.join(dbg_dir, fname), logs)
+    dumpj(os.path.join(log_dir, fname), logs)
 
 
-def _select_skills_for_occ(occ_name: str, noo: int, skills: List[str], client, model: str) -> List[str]:
+def _select_skills_for_occ(occ_name: str, noo: int, skills: List[str], client, model: str, log_dir: str) -> List[str]:
     target = min(noo, len(skills))
     logs = {"occupation": occ_name, "target_NOO": noo, "step1": {}, "step2": [], "step3": []}
 
-    # --- Step 1: Majority vote (≥2 รอบ) ---
+    # Step 1: Majority vote (≥2/3)
     rounds = _run_rounds(occ_name, skills, client, model, n_rounds=3)
     logs["step1"]["rounds"] = rounds
     majority = _majority_at_least(rounds, k=2)
     selected = _ordered_intersection(skills, majority)
     logs["step1"]["majority_selected"] = selected.copy()
-
     if len(selected) >= target:
-        _dump_log(occ_name, logs)
+        _dump_log(log_dir, occ_name, logs)
         return selected[:target]
 
-    # --- Step 2: เติมจาก union + ให้คะแนน ---
+    # Step 2: เติมจาก union + ให้คะแนน
     union = _ordered_union(rounds)
     extras_from_union = [s for s in union if s not in selected]
     if extras_from_union:
-        scored_union = _score_and_sort(occ_name, extras_from_union, client, model)
-        for sc, sk in scored_union:
+        for sc, sk in _score_and_sort(occ_name, extras_from_union, client, model):
             if len(selected) >= target:
                 break
             selected.append(sk)
             logs["step2"].append({"skill": sk, "score": sc})
-
     if len(selected) >= target:
-        _dump_log(occ_name, logs)
+        _dump_log(log_dir, occ_name, logs)
         return selected[:target]
 
-    # --- Step 3: เติมจาก remaining + ให้คะแนน ---
+    # Step 3: เติมจากที่เหลือทั้งหมด + ให้คะแนน
     remaining = [s for s in skills if s not in selected]
     if remaining:
-        scored_remaining = _score_and_sort(occ_name, remaining, client, model)
-        for sc, sk in scored_remaining:
+        for sc, sk in _score_and_sort(occ_name, remaining, client, model):
             if len(selected) >= target:
                 break
             selected.append(sk)
             logs["step3"].append({"skill": sk, "score": sc})
 
-    _dump_log(occ_name, logs)
+    _dump_log(log_dir, occ_name, logs)
     return selected[:target]
 
 
