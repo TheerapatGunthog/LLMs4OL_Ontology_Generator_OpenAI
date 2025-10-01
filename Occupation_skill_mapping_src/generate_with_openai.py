@@ -188,26 +188,56 @@ def _safe_debug_write(path: str, txt: Any) -> None:
         pass
 
 
-def _select_skills_for_occ(occ_name: str, noo: int, skills: List[str], client, model: str) -> List[str]:
-    target = min(noo, len(skills))  # ป้องกัน NOO > universe
+def _dump_log(occ_name: str, logs: dict):
+    """เขียน log แยกตาม occupation ลงไฟล์"""
+    dbg_dir = "debug_logs"
+    ensure_dir(dbg_dir)
+    fname = _safe_name(occ_name) + ".json"
+    dumpj(os.path.join(dbg_dir, fname), logs)
 
+
+def _select_skills_for_occ(occ_name: str, noo: int, skills: List[str], client, model: str) -> List[str]:
+    target = min(noo, len(skills))
+    logs = {"occupation": occ_name, "target_NOO": noo, "step1": {}, "step2": [], "step3": []}
+
+    # --- Step 1: Majority vote (≥2 รอบ) ---
     rounds = _run_rounds(occ_name, skills, client, model, n_rounds=3)
+    logs["step1"]["rounds"] = rounds
     majority = _majority_at_least(rounds, k=2)
-    selected = _ordered_intersection(skills, majority)[:target]
+    selected = _ordered_intersection(skills, majority)
+    logs["step1"]["majority_selected"] = selected.copy()
 
     if len(selected) >= target:
-        return selected
+        _dump_log(occ_name, logs)
+        return selected[:target]
 
-    remaining = [s for s in skills if s not in selected]
-    scored = _score_and_sort(occ_name, remaining, client, model)
-
-    for _, sk in scored:
-        if sk not in selected:
-            selected.append(sk)
+    # --- Step 2: เติมจาก union + ให้คะแนน ---
+    union = _ordered_union(rounds)
+    extras_from_union = [s for s in union if s not in selected]
+    if extras_from_union:
+        scored_union = _score_and_sort(occ_name, extras_from_union, client, model)
+        for sc, sk in scored_union:
             if len(selected) >= target:
                 break
+            selected.append(sk)
+            logs["step2"].append({"skill": sk, "score": sc})
 
-    return selected
+    if len(selected) >= target:
+        _dump_log(occ_name, logs)
+        return selected[:target]
+
+    # --- Step 3: เติมจาก remaining + ให้คะแนน ---
+    remaining = [s for s in skills if s not in selected]
+    if remaining:
+        scored_remaining = _score_and_sort(occ_name, remaining, client, model)
+        for sc, sk in scored_remaining:
+            if len(selected) >= target:
+                break
+            selected.append(sk)
+            logs["step3"].append({"skill": sk, "score": sc})
+
+    _dump_log(occ_name, logs)
+    return selected[:target]
 
 
 def _run_rounds(occ_name: str, skills: List[str], client, model: str, n_rounds: int) -> List[List[str]]:
@@ -500,7 +530,7 @@ def main():
         "occupations_csv": "occ_update.csv",
         "skills_csv": "skill_update.csv",
         "out_root": "Occupations_Skills_Mapping",
-        "model": "gpt-4o",
+        "model": "gpt-4.1",
         "taxonomy_seeds": 'auto',
         "taxonomy_mode": "auto",
         "relation_labels": ["related_to", "collaborates_with", "depends_on"],
