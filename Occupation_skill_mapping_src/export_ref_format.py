@@ -8,6 +8,7 @@ from types import SimpleNamespace
 TASKA_SUBDIR = "JobSkillsSet"   # ชุดข้อมูลของ TaskA
 TASKB_SUBDIR = "Occupations"
 TASKC_SUBDIR = "Occupations"
+TASKD_SUBDIRS = ["SkillsRoot", "SkillsCombination", "SkillsComposition"]
 
 
 def loadj(p: Path):
@@ -133,11 +134,51 @@ def export_taskC(root: Path, kb: str, model: str = "gpt4", template_name: str = 
         dumpj(loadj(tpl), kb_dir / "templates.json")
 
 
+def export_taskD(root: Path, kb: str, model: str = "gpt4", template_name: str = "template-1"):
+    """
+    Export skill↔skill relations (root, combination, composition).
+    Each subdir under TaskD contains pairs.json, label_mapper.json, templates.json.
+    """
+    base_in = root / "TaskD"
+    t = time.strftime("%Y-%m-%d %H:%M:%S")
+
+    for sub in TASKD_SUBDIRS:
+        sub_in = base_in / sub
+        pairs_path = sub_in / "pairs.json"
+        if not pairs_path.exists():
+            continue
+        pairs = loadj(pairs_path)  # [{"head": <Skill>, "tail": <Skill>, "label": <rel>}]
+
+        res_dir = root.parent / "TaskD" / "results" / kb / model / sub
+        os.makedirs(res_dir, exist_ok=True)
+        dumpj(
+            {"kb_name": kb, "model": model, "template": template_name, "time": t,
+             "relations": pairs, "metric": "n/a"},
+            res_dir / f"output-{model}-{template_name}-{t}.json",
+        )
+        relset = sorted({r["label"] for r in pairs})
+        dumpj(
+            {"kb_name": kb, "model": model, "template": template_name, "time": t,
+             "counts": {"relations": len(pairs)}, "labels": relset},
+            res_dir / f"report-{model}-{template_name}-{t}.json",
+        )
+
+        # copy meta
+        kb_dir = root.parent / "TaskD" / kb / sub
+        os.makedirs(kb_dir, exist_ok=True)
+        lm = sub_in / "label_mapper.json"
+        if lm.exists():
+            dumpj(loadj(lm), kb_dir / "label_mapper.json")
+        tpl = sub_in / "templates.json"
+        if tpl.exists():
+            dumpj(loadj(tpl), kb_dir / "templates.json")
+
+
 def main():
     args_dict = {
         "datasets_root": "Occupations_Skills_Mapping",
         "sets": ["JobSkillsSet"],          # รับเป็นลิสต์
-        "model": "gpt-4o-mini",
+        "model": "gpt-4o",
         "template": "template-1",
     }
     args = SimpleNamespace(**args_dict)
@@ -148,7 +189,7 @@ def main():
     sets = args.sets if isinstance(args.sets, (list, tuple, set)) else [args.sets]
 
     for kb in sets:
-        # ตรวจอินพุตตามโครงสร้างจริง: root/TaskA/<kb>/..., root/TaskB/Occupations/..., root/TaskC/Occupations/...
+        # ตรวจอินพุต Task A, B, C
         required_legacy = [
             root / "TaskA" / kb / "data.json",
             root / "TaskB" / TASKB_SUBDIR / "pairs.json",
@@ -167,9 +208,11 @@ def main():
         if missing_b_c:
             raise FileNotFoundError("Missing inputs: " + " | ".join(missing_b_c))
 
+        # run exports
         export_taskA(root, kb)
         export_taskB(root, kb, model=args.model, template_name=args.template)
         export_taskC(root, kb, model=args.model, template_name=args.template)
+        export_taskD(root, kb, model=args.model, template_name=args.template)
 
     print("done.")
 

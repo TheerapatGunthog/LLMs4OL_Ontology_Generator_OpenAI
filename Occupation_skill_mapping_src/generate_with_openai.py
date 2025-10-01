@@ -96,16 +96,55 @@ def _slug(s: str) -> str:
     return s
 
 
-# --- Task A: skill -> multiple occupations, strict from LLM only (no backfill) ---
+# --- Task A (refactored): supports NOO with 3-round majority + scoring; lower cyclomatic complexity ---
 def taskA_map_skills_to_occ(skills_csv: str, occ_csv: str, out_dir: str, model: str) -> List[str]:
     df_s = pd.read_csv(skills_csv)
     df_o = pd.read_csv(occ_csv)
-    s_col = pick_col(df_s, ["skill", "skills", "name", "title"])
+
+    s_col = pick_col(df_s, ["skill", "skills, ", "skills", "name", "title"])
     o_col = pick_col(df_o, ["occupation", "job", "title", "name"])
 
-    skills = [str(x).strip() for x in df_s[s_col].dropna().tolist() if str(x).strip()]
-    occup = list(dict.fromkeys([str(x).strip() for x in df_o[o_col].dropna().tolist() if str(x).strip()]))
+    skills = _dedupe_str(df_s[s_col])
+    occup = _dedupe_str(df_o[o_col])
 
+    ensure_dir(out_dir)
+    has_noo = "NOO" in df_o.columns
+    if not has_noo:
+        occ2skills = _taskA_fallback_original(skills, occup, out_dir, model)
+        _persist_occ2skills(out_dir, occ2skills, occup)
+        _persist_entities_stats(out_dir, occ2skills, occup)
+        return occup
+
+    # NOO pipeline
+    client = get_client()
+    df_noo = df_o[[o_col, "NOO"]].copy()
+    df_noo["NOO"] = pd.to_numeric(df_noo["NOO"], errors="coerce").fillna(0).astype(int).clip(lower=0)
+
+    occ2skills = {o: [] for o in occup}
+    for occ_name, noo in tqdm(df_noo.itertuples(index=False), total=len(df_noo), desc="TaskA: occupation→skills"):
+        if noo <= 0:
+            continue
+        selected = _select_skills_for_occ(occ_name, noo, skills, client, model)
+        occ2skills[occ_name] = selected
+
+    _persist_occ2skills(out_dir, occ2skills, occup)
+    _persist_templates_noo(out_dir)
+    _persist_entities_stats(out_dir, occ2skills, occup)
+    return occup
+
+
+# ---------- helpers (small, single-purpose) ----------
+
+def _dedupe_str(series: pd.Series) -> List[str]:
+    vals = [str(x).strip() for x in series.dropna().tolist() if str(x).strip()]
+    return list(dict.fromkeys(vals))
+
+
+def _safe_name(x: str) -> str:
+    return re.sub(r"[^a-zA-Z0-9_.-]+", "_", x)[:80]
+
+
+def _taskA_fallback_original(skills: List[str], occup: List[str], out_dir: str, model: str) -> dict:
     client = get_client()
     lbls = ", ".join(occup)
     tmpl = (
@@ -114,39 +153,18 @@ def taskA_map_skills_to_occ(skills_csv: str, occ_csv: str, out_dir: str, model: 
         "Answer with ALL matching occupations as a JSON array of strings. "
         "If uncertain, include multiple plausible occupations."
     )
-
-    data = []
-    dbg_dir = os.path.join(out_dir, "_debug_raw")
+    data, dbg_dir = [], os.path.join(out_dir, "_debug_raw")
     ensure_dir(dbg_dir)
 
     for s in tqdm(skills, desc="TaskA: skills→occupations"):
         u = tmpl.format(skill=s, labels=lbls)
-        txt = ""
-        try:
-            txt = chat(client, model, SYS_A, u, 512)
-            labs = _extract_json_array(txt)
-        except Exception:
-            labs = None
-
-        # debug raw
-        try:
-            with open(os.path.join(dbg_dir, f"{_slug(s)[:80]}.txt"), "w", encoding="utf-8") as f:
-                f.write(txt if isinstance(txt, str) else str(txt))
-        except Exception:
-            pass
-
-        if not labs:
-            # strict: ไม่ backfill อัตโนมัติ
-            labs = []
-
-        # keep only valid occupations
+        txt = chat(client, model, SYS_A, u, 512)
+        labs = _extract_json_array(txt) or []
         labs = [lab for lab in labs if lab in occup]
-
-        # collect strictly what LLM gave
+        _safe_debug_write(os.path.join(dbg_dir, f"{_safe_name(s)}.txt"), txt)
         for lab in labs:
             data.append({"text": s, "label": lab})
 
-    # legacy TaskA artifacts
     dumpj(f"{out_dir}/data.json", data)
     dumpj(f"{out_dir}/label_mapper.json", {str(i): l for i, l in enumerate(occup)})
     dumpj(
@@ -156,30 +174,114 @@ def taskA_map_skills_to_occ(skills_csv: str, occ_csv: str, out_dir: str, model: 
             "Labels: {labels}. Answer with a JSON array of labels."
         ],
     )
-
-    # Build occ2skills, dedupe per occupation, allow cross-occupation duplicates
     occ2skills = {occ: [] for occ in occup}
     for r in data:
         occ2skills[r["label"]].append(r["text"])
-    occ2skills = {occ: sorted(dict.fromkeys(sk_list)) for occ, sk_list in occ2skills.items()}
+    return {occ: sorted(dict.fromkeys(v)) for occ, v in occ2skills.items()}
 
+
+def _safe_debug_write(path: str, txt: Any) -> None:
+    try:
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(txt if isinstance(txt, str) else str(txt))
+    except Exception:
+        pass
+
+
+def _select_skills_for_occ(occ_name: str, noo: int, skills: List[str], client, model: str) -> List[str]:
+    target = min(noo, len(skills))  # ป้องกัน NOO > universe
+
+    rounds = _run_rounds(occ_name, skills, client, model, n_rounds=3)
+    majority = _majority_at_least(rounds, k=2)
+    selected = _ordered_intersection(skills, majority)[:target]
+
+    if len(selected) >= target:
+        return selected
+
+    remaining = [s for s in skills if s not in selected]
+    scored = _score_and_sort(occ_name, remaining, client, model)
+
+    for _, sk in scored:
+        if sk not in selected:
+            selected.append(sk)
+            if len(selected) >= target:
+                break
+
+    return selected
+
+
+def _run_rounds(occ_name: str, skills: List[str], client, model: str, n_rounds: int) -> List[List[str]]:
+    sys_prompt = (
+        "You are a skills extractor. Given ONE OCCUPATION and a CLOSED SET of SKILL labels, "
+        "return ONLY the relevant skills for that occupation. "
+        "Return STRICTLY a JSON array of strings. Use ONLY skills from the provided set."
+    )
+    usr_prefix = f"Occupation: {occ_name}\nClosed skill set ({len(skills)} items):\n" + "\n".join(f"- {s}" for s in skills) + "\nAnswer with a JSON array containing only items from the set."
+    out = []
+    for _ in range(n_rounds):
+        txt = chat(client, model, sys_prompt, usr_prefix, mt=1024)
+        arr = _extract_json_array(txt) or []
+        out.append([s for s in arr if s in skills])
+    return out
+
+
+def _majority_at_least(rounds: List[List[str]], k: int) -> List[str]:
+    freq: dict = {}
+    for arr in rounds:
+        for s in set(arr):
+            freq[s] = freq.get(s, 0) + 1
+    return [s for s, c in freq.items() if c >= k]
+
+
+def _ordered_union(rounds: List[List[str]]) -> List[str]:
+    seen, out = set(), []
+    for arr in rounds:
+        for s in arr:
+            if s not in seen:
+                seen.add(s)
+                out.append(s)
+    return out
+
+
+def _ordered_intersection(reference: List[str], subset: List[str]) -> List[str]:
+    subset_set = set(subset)
+    return [s for s in reference if s in subset_set]
+
+
+def _score_and_sort(occ_name: str, skills: List[str], client, model: str) -> List[tuple]:
+    sys_prompt = "You are a judge. Given an OCCUPATION and ONE SKILL, output an integer relevance score 0-100. 0 means unrelated. 100 means essential. Return ONLY the integer."
+
+    def _score(skill_name: str) -> int:
+        txt = chat(client, model, sys_prompt, f"Occupation: {occ_name}\nSkill: {skill_name}\nScore 0-100:", mt=8)
+        m = re.search(r"\d{1,3}", txt or "")
+        v = int(m.group(0)) if m else 0
+        return max(0, min(100, v))
+    scored = [(_score(sk), sk) for sk in skills]
+    scored.sort(reverse=True)
+    return scored
+
+
+def _persist_occ2skills(out_dir: str, occ2skills: dict, occup: List[str]) -> None:
     dumpj(f"{out_dir}/occ2skills.json", [{"occupation": occ, "skills": sks} for occ, sks in occ2skills.items()])
+    dumpj(f"{out_dir}/data.json", [{"text": sk, "label": occ} for occ, sks in occ2skills.items() for sk in sks])
+    dumpj(f"{out_dir}/label_mapper.json", {str(i): l for i, l in enumerate(occup)})
 
-    # Entities and stats (strictly as mapped)
-    ents = [{"entity": sk, "type": occ} for occ, sks in occ2skills.items() for sk in sks]
-    per = {occ: len(occ2skills[occ]) for occ in occup}
-    dumpj(f"{os.path.dirname(out_dir)}/jobskillsset_entities.json", ents)
+
+def _persist_templates_noo(out_dir: str) -> None:
     dumpj(
-        f"{os.path.dirname(out_dir)}/stats.json",
-        {
-            "kb_name": "JobSkillsSet",
-            "n_entities": len(ents),
-            "n_types": len(occup),
-            "per_type": per
-        },
+        f"{out_dir}/templates.json",
+        [
+            "Select all relevant SKILLs for an OCCUPATION from a CLOSED SET. "
+            "Return a JSON array of strings chosen only from the provided set."
+        ],
     )
 
-    return occup
+
+def _persist_entities_stats(out_dir: str, occ2skills: dict, occup: List[str]) -> None:
+    ents = [{"entity": sk, "type": occ} for occ, sks in occ2skills.items() for sk in sks]
+    per = {occ: len(occ2skills.get(occ, [])) for occ in occup}
+    dumpj(f"{os.path.dirname(out_dir)}/jobskillsset_entities.json", ents)
+    dumpj(f"{os.path.dirname(out_dir)}/stats.json", {"kb_name": "JobSkillsSet", "n_entities": len(ents), "n_types": len(occup), "per_type": per})
 
 
 # --- Helpers for Task B auto seeds ---
@@ -275,13 +377,130 @@ def taskC_occ_relations(
     )
 
 
+# --- Task D.1: skill ROOT skill (YES/NO) ---
+def taskD_skill_root(skills_csv: str, out_dir: str, model: str, max_pairs: int = 400):
+    df_s = pd.read_csv(skills_csv)
+    s_col = pick_col(df_s, ["skill", "skills", "name", "title"])
+    skills = [str(x).strip() for x in df_s[s_col].dropna().tolist() if str(x).strip()]
+    skills = list(dict.fromkeys(skills))
+
+    client = get_client()
+    ensure_dir(out_dir)
+
+    SYS = (
+        "You are a skills ontology classifier. Given two SKILL labels, "
+        "answer YES if HEAD is a ROOT or more foundational version of TAIL. "
+        "Return only YES or NO."
+    )
+    USR_T = "HEAD SKILL: {h}\nTAIL SKILL: {t}\nAnswer YES or NO only."
+
+    pairs = []
+    for i in range(len(skills)):
+        for j in range(len(skills)):
+            if i == j:
+                continue
+            pairs.append((skills[i], skills[j]))
+    pairs = pairs[:max_pairs]
+
+    out = []
+    for h, t in tqdm(pairs, desc="TaskD1: skill-root-skill"):
+        lbl = chat(client, model, SYS, USR_T.format(h=h, t=t), 8).upper()
+        lbl = "YES" if "YES" in lbl else "NO"
+        out.append({"head": h, "tail": t, "label": lbl})
+
+    dumpj(f"{out_dir}/pairs.json", out)
+    dumpj(f"{out_dir}/label_mapper.json", {"0": "NO", "1": "YES"})
+    dumpj(
+        f"{out_dir}/templates.json",
+        ["Decide if HEAD is a ROOT of TAIL. Head: {head}  Tail: {tail}  Answer YES/NO."]
+    )
+
+
+# --- Task D.2: skill COMBINATION skill (YES/NO) ---
+def taskD_skill_combination(skills_csv: str, out_dir: str, model: str, max_pairs: int = 400):
+    df_s = pd.read_csv(skills_csv)
+    s_col = pick_col(df_s, ["skill", "skills", "name", "title"])
+    skills = [str(x).strip() for x in df_s[s_col].dropna().tolist() if str(x).strip()]
+    skills = list(dict.fromkeys(skills))
+
+    client = get_client()
+    ensure_dir(out_dir)
+
+    SYS = (
+        "You are a skills relations judge. Given two SKILL labels, "
+        "answer YES if HEAD commonly COMBINES WITH TAIL as a pair used together in real tasks. "
+        "Return only YES or NO."
+    )
+    USR_T = "HEAD SKILL: {h}\nTAIL SKILL: {t}\nAnswer YES or NO only."
+
+    pairs = []
+    for i in range(len(skills)):
+        for j in range(len(skills)):
+            if i == j:
+                continue
+            pairs.append((skills[i], skills[j]))
+    pairs = pairs[:max_pairs]
+
+    out = []
+    for h, t in tqdm(pairs, desc="TaskD2: skill-combination-skill"):
+        lbl = chat(client, model, SYS, USR_T.format(h=h, t=t), 8).upper()
+        lbl = "YES" if "YES" in lbl else "NO"
+        out.append({"head": h, "tail": t, "label": lbl})
+
+    dumpj(f"{out_dir}/pairs.json", out)
+    dumpj(f"{out_dir}/label_mapper.json", {"0": "NO", "1": "YES"})
+    dumpj(
+        f"{out_dir}/templates.json",
+        ["Decide if HEAD COMBINES WITH TAIL in practice. Head: {head}  Tail: {tail}  Answer YES/NO."]
+    )
+
+
+# --- Task D.3: skill COMPOSITION skill (YES/NO) ---
+def taskD_skill_composition(skills_csv: str, out_dir: str, model: str, max_pairs: int = 400):
+    df_s = pd.read_csv(skills_csv)
+    s_col = pick_col(df_s, ["skill", "skills", "name", "title"])
+    skills = [str(x).strip() for x in df_s[s_col].dropna().tolist() if str(x).strip()]
+    skills = list(dict.fromkeys(skills))
+
+    client = get_client()
+    ensure_dir(out_dir)
+
+    SYS = (
+        "You are a skills decomposition analyst. Given two SKILL labels, "
+        "answer YES if HEAD is a COMPONENT composing TAIL (i.e., TAIL is built from HEAD and others). "
+        "Return only YES or NO."
+    )
+    USR_T = "HEAD SKILL: {h}\nTAIL SKILL: {t}\nAnswer YES or NO only."
+
+    pairs = []
+    for i in range(len(skills)):
+        for j in range(len(skills)):
+            if i == j:
+                continue
+            pairs.append((skills[i], skills[j]))
+    pairs = pairs[:max_pairs]
+
+    out = []
+    for h, t in tqdm(pairs, desc="TaskD3: skill-composition-skill"):
+        lbl = chat(client, model, SYS, USR_T.format(h=h, t=t), 8).upper()
+        lbl = "YES" if "YES" in lbl else "NO"
+        out.append({"head": h, "tail": t, "label": lbl})
+
+    dumpj(f"{out_dir}/pairs.json", out)
+    dumpj(f"{out_dir}/label_mapper.json", {"0": "NO", "1": "YES"})
+    dumpj(
+        f"{out_dir}/templates.json",
+        ["Decide if HEAD is a COMPONENT of TAIL. Head: {head}  Tail: {tail}  Answer YES/NO."]
+    )
+
+
 # --- CLI ---
 def main():
     args_dict = {
         "occupations_csv": "occ_update.csv",
         "skills_csv": "skill_update.csv",
         "out_root": "Occupations_Skills_Mapping",
-        "model": "gpt-4o-mini",
+        "model": "gpt-4o",
         "taxonomy_seeds": 'auto',
         "taxonomy_mode": "auto",
         "relation_labels": ["related_to", "collaborates_with", "depends_on"],
@@ -322,6 +541,12 @@ def main():
     # Task C
     C_dir = f"{args.out_root}/TaskC/Occupations"
     taskC_occ_relations(occ_types, C_dir, args.model, args.relation_labels)
+
+    # Task D
+    D_root = f"{args.out_root}/TaskD"
+    taskD_skill_root(args.skills_csv, f"{D_root}/SkillsRoot", args.model)
+    taskD_skill_combination(args.skills_csv, f"{D_root}/SkillsCombination", args.model)
+    taskD_skill_composition(args.skills_csv, f"{D_root}/SkillsComposition", args.model)
 
     print(f"Done → {args.out_root}")
 
