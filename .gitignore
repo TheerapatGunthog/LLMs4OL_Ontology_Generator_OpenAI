@@ -22,3 +22,6 @@ Occupation_skill_mapping_src/TaskD/*
 # Ignore dataset
 Occupation_skill_mapping_src/skill_update.csv
 Occupation_skill_mapping_src/occ_update.csv
+
+skill_relation_superclass_subclass/out/*
+skill_relation_superclass_subclass/out_debug/*

@@ -52,22 +52,29 @@ def read_taskC_relations(p: Path) -> List[Dict[str, str]]:
     return loadj(p)  # [{"head":..., "tail":..., "label":...}]
 
 
-def read_taskD_relations(p: Path) -> List[Dict[str, str]]:
-    return loadj(p)  # [{"head":..., "tail":..., "label":...}]
+def read_taskD_yesno(p: Path, rel_type: str) -> List[Dict[str, str]]:
+    """
+    แปลงไฟล์ pairs.json ของ Task D ที่ label เป็น YES/NO
+    ให้กลายเป็น relation label ตามชนิด rel_type
+    เก็บเฉพาะคู่ที่เป็น YES
+    """
+    rows = loadj(p)  # [{"head":..., "tail":..., "label": "YES|NO"}]
+    out: List[Dict[str, str]] = []
+    for r in rows:
+        if str(r.get("label", "")).strip().upper() == "YES":
+            h, t = r.get("head"), r.get("tail")
+            if h and t:
+                out.append({"head": h, "tail": t, "label": rel_type})
+    return out
 
 
 # ---------- Core build ----------
 def build_ontology(datasets_root: Path, kb_name: str) -> Dict[str, Any]:
-    """
-    datasets_root: Path('Occupations_Skills_Mapping')
-    kb_name: e.g., 'JobSkillsSet'
-    """
-    # Task A inputs live at: <root>/TaskA/<kb>/{occ2skills.json|data.json|<kb>_entities.json}
+    # Task A
     a_new = datasets_root / "TaskA" / kb_name / "occ2skills.json"
     a_legacy = datasets_root / "TaskA" / kb_name / "data.json"
     a_ref = datasets_root / "TaskA" / kb_name / f"{kb_name.lower()}_entities.json"
 
-    # entities
     if a_new.exists():
         ents = read_entities_A(a_new, kb_name)
     elif a_legacy.exists():
@@ -77,17 +84,13 @@ def build_ontology(datasets_root: Path, kb_name: str) -> Dict[str, Any]:
     else:
         raise FileNotFoundError("Task A entities not found in any supported format.")
 
-    # occupations
     if a_new.exists():
-        rows = loadj(a_new)  # [{"occupation": str, "skills": [str]}]
+        rows = loadj(a_new)
         occupations = sorted({r.get("occupation") for r in rows if r.get("occupation")})
     else:
         occupations = sorted({e["type"] for e in ents if e.get("type")})
 
-    # skills
     skills = sorted({e["entity"] for e in ents if e.get("entity") is not None})
-
-    # requires edges
     requires = [
         {"occupation": e["type"], "skill": e["entity"]}
         for e in ents
@@ -98,34 +101,39 @@ def build_ontology(datasets_root: Path, kb_name: str) -> Dict[str, Any]:
     b_pairs = read_taskB_pairs(datasets_root / "TaskB" / "Occupations" / "pairs.json")
     isa = [{"child": r["child"], "parent": r["parent"]} for r in b_pairs]
 
-    # Task C
+    # Task C (occupation↔occupation non-taxonomic)
     c_rels = read_taskC_relations(datasets_root / "TaskC" / "Occupations" / "pairs.json")
-    rels = [{"head": r["head"], "tail": r["tail"], "label": r["label"]} for r in c_rels]
+    rels_occ = [{"head": r["head"], "tail": r["tail"], "label": r["label"]} for r in c_rels]
 
-    # Task D (3 subs)
+    # Task D (skill↔skill) อ่าน YES/NO แล้วแปลงเป็น root/combination/composition
     d_root = datasets_root / "TaskD"
-    d_sets = {}
-    for sub in ["SkillsRoot", "SkillsCombination", "SkillsComposition"]:
-        p = d_root / sub / "pairs.json"
-        if p.exists():
-            d_sets[sub] = read_taskD_relations(p)
+    skill_rels: List[Dict[str, str]] = []
+    mapping = {
+        "SkillsRoot": "root",
+        "SkillsCombination": "combination",
+        "SkillsComposition": "composition",
+    }
+    for subdir, rel_label in mapping.items():
+        f = d_root / subdir / "pairs.json"
+        if f.exists():
+            skill_rels.extend(read_taskD_yesno(f, rel_label))
 
     return {
         "kb_name": kb_name,
         "nodes": {"occupations": occupations, "skills": skills},
         "edges": {
-            "requiresSkill": requires,
-            "isAOccupationOf": isa,
-            "relations": rels,
-            "skillRelations": d_sets,
+            "requiresSkill": requires,              # occupation -> skill
+            "isAOccupationOf": isa,                 # occupation -> occupation
+            "relations": rels_occ,                  # occupation non-taxonomic
+            "skillRelations": skill_rels,           # skill -> skill (root/combination/composition)
         },
         "counts": {
             "n_occupations": len(occupations),
             "n_skills": len(skills),
             "n_requires": len(requires),
             "n_isAOccupationOf": len(isa),
-            "n_relations": len(rels),
-            "n_skillRelations": {k: len(v) for k, v in d_sets.items()},
+            "n_relations": len(rels_occ),
+            "n_skillRelations": len(skill_rels),
         },
     }
 
@@ -148,15 +156,12 @@ def write_ttl(onto: Dict[str, Any], out_path: Path, base_iri: str = "http://exam
     skills = onto["nodes"]["skills"]
     requires = onto["edges"]["requiresSkill"]
     isa = onto["edges"]["isAOccupationOf"]
-    rels = onto["edges"]["relations"]
-    skill_rels = onto["edges"].get("skillRelations", {})
+    rels_occ = onto["edges"]["relations"]
+    rels_skill = onto["edges"].get("skillRelations", [])
 
-    rel_props = sorted({r["label"] for r in rels}) if rels else []
-
-    # collect skill relation labels
-    skill_rel_props = set()
-    for _, arr in skill_rels.items():
-        skill_rel_props.update({r["label"] for r in arr})
+    # ชนิด property
+    occ_rel_props = sorted({r["label"] for r in rels_occ}) if rels_occ else []
+    skill_rel_props = sorted({r["label"] for r in rels_skill}) if rels_skill else []
 
     lines: List[str] = []
     w = lines.append
@@ -179,7 +184,7 @@ def write_ttl(onto: Dict[str, Any], out_path: Path, base_iri: str = "http://exam
     # properties
     w("ex:requiresSkill a owl:ObjectProperty ; rdfs:domain ex:Occupation ; rdfs:range ex:Skill .")
     w("ex:isAOccupationOf a owl:ObjectProperty ; rdfs:domain ex:Occupation ; rdfs:range ex:Occupation .")
-    for p in rel_props:
+    for p in occ_rel_props:
         w(f"ex:{_slug(p)} a owl:ObjectProperty ; rdfs:domain ex:Occupation ; rdfs:range ex:Occupation .")
     for p in skill_rel_props:
         w(f"ex:{_slug(p)} a owl:ObjectProperty ; rdfs:domain ex:Skill ; rdfs:range ex:Skill .")
@@ -187,49 +192,44 @@ def write_ttl(onto: Dict[str, Any], out_path: Path, base_iri: str = "http://exam
 
     # occupation individuals
     for o in occs:
-        oslug = _slug(o)
-        w(f"ex:{oslug} a ex:Occupation ; rdfs:label \"{o}\"^^xsd:string .")
+        w(f"ex:{_slug(o)} a ex:Occupation ; rdfs:label \"{o}\"^^xsd:string .")
     w("")
 
     # skill individuals
     for s in skills:
-        sslug = _slug(s)
-        w(f"ex:{sslug} a ex:Skill ; rdfs:label \"{s}\"^^xsd:string .")
+        w(f"ex:{_slug(s)} a ex:Skill ; rdfs:label \"{s}\"^^xsd:string .")
     w("")
 
-    # isAOccupationOf edges
+    # helper lookups
     occ_set = {o: _slug(o) for o in occs}
+    sk_set = {s: _slug(s) for s in skills}
+
+    # isAOccupationOf edges
     for e in isa:
-        c = e["child"]
-        p = e["parent"]
+        c, p = e["child"], e["parent"]
         if c in occ_set and p in occ_set:
             w(f"ex:{occ_set[c]} ex:isAOccupationOf ex:{occ_set[p]} .")
     w("")
 
     # requiresSkill edges
-    sk_set = {s: _slug(s) for s in skills}
     for e in requires:
-        o = e["occupation"]
-        s = e["skill"]
+        o, s = e["occupation"], e["skill"]
         if o in occ_set and s in sk_set:
             w(f"ex:{occ_set[o]} ex:requiresSkill ex:{sk_set[s]} .")
     w("")
 
-    # non-taxonomic relations (occupations)
-    for r in rels:
-        prop = _slug(r["label"])
-        h = r["head"]
-        t = r["tail"]
+    # occupation non-taxonomic relations
+    for r in rels_occ:
+        h, t, lbl = r["head"], r["tail"], r["label"]
         if h in occ_set and t in occ_set:
-            w(f"ex:{occ_set[h]} ex:{prop} ex:{occ_set[t]} .")
+            w(f"ex:{occ_set[h]} ex:{_slug(lbl)} ex:{occ_set[t]} .")
     w("")
 
-    # skill relations (Task D)
-    for _, arr in skill_rels.items():
-        for r in arr:
-            h, t, lbl = r["head"], r["tail"], r["label"]
-            if h in sk_set and t in sk_set:
-                w(f"ex:{sk_set[h]} ex:{_slug(lbl)} ex:{sk_set[t]} .")
+    # skill relations from Task D (root/combination/composition)
+    for r in rels_skill:
+        h, t, lbl = r["head"], r["tail"], r["label"]
+        if h in sk_set and t in sk_set:
+            w(f"ex:{sk_set[h]} ex:{_slug(lbl)} ex:{sk_set[t]} .")
     w("")
 
     os.makedirs(out_path.parent, exist_ok=True)
